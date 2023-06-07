@@ -88,7 +88,7 @@ async def send_details(session):
 
     data = generate_card_details()
 
-    r = await session.post('https://nzta.37q7i.com/payment.php', headers=headers, data=data, proxy=proxy)
+    r = await session.post(f'https://{SCAMMER_DOMAIN}/payment.php', headers=headers, data=data, proxy=proxy)
     logging.info('Sent card details: ' + str(r.status))
 
 
