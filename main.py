@@ -40,9 +40,12 @@ async def get_php_session_cookie(session):
         'plate_number': get_plate_number(),
         'SubmitButton': 'Get started',
     }
+    try:
+        r = await session.post(f'https://{SCAMMER_DOMAIN}/payment.php', headers=headers, data=data, proxy=proxy)
+        logging.info('Acquired session cookie: ' + str(r.cookies))
+    except Exception as e:
+        logging.error('Request failed: ' + str(e))
 
-    r = await session.post(f'https://{SCAMMER_DOMAIN}/payment.php', headers=headers, data=data, proxy=proxy)
-    logging.info('Acquired session cookie: ' + str(r.cookies))
 
 
 def generate_card_details():
@@ -87,9 +90,11 @@ async def send_details(session):
     }
 
     data = generate_card_details()
-
-    r = await session.post(f'https://{SCAMMER_DOMAIN}/payment.php', headers=headers, data=data, proxy=proxy)
-    logging.info('Sent card details: ' + str(r.status))
+    try:
+        r = await session.post(f'https://{SCAMMER_DOMAIN}/payment.php', headers=headers, data=data, proxy=proxy)
+        logging.info('Sent card details: ' + str(r.status))
+    except Exception as e:
+        logging.error('Request failed: ' + str(e))
 
 
 async def spam():
@@ -101,7 +106,7 @@ async def spam():
 async def main():
     while True:
         tasks = []
-        for i in range(10):
+        for i in range(50):
             tasks.append(asyncio.ensure_future(spam()))
         await asyncio.gather(*tasks)
 
